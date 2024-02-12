@@ -1,0 +1,11 @@
+package manetu:lambda@0.0.1;
+
+interface sparql {
+  query: func(expr: string) -> string;
+}
+
+world lambda {
+  import sparql;
+
+  export handler: func(request: string) -> string;
+}
