@@ -23,10 +23,11 @@ This SDK may be installed with
 $ go get -u gitlab.com/manetu/pre-release/lambda/lambda-sdk-go
 ```
 
-We will also be using [zerolog](https://github.com/rs/zerolog) as part of our example
+We will also be using [zerolog](https://github.com/rs/zerolog) and [mustach](https://github.com/hoisie/mustache) as part of our example
 
 ``` shell
 $ go get -u github.com/rs/zerolog/log
+$ go get -u github.com/hoisie/mustache
 ```
 
 ### Create a main module and HTTP event handler
@@ -37,35 +38,60 @@ Create a file 'main.go' with the following contents:
 package main
 
 import (
-    "github.com/rs/zerolog/log"
-    "gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
-    "os"
+	"github.com/hoisie/mustache"
+	"github.com/rs/zerolog/log"
+	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
+	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go/sparql"
+	"os"
+	"time"
 )
 
 type context struct {
 }
 
+var queryTemplate = `
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/> 
+SELECT ?dob
+WHERE { 
+     ?s foaf:biometric-hash "{{biometric-hash}}" ;
+        foaf:dob            ?dob .
+}
+`
+
 func (c context) Handler(request lambda.Request) lambda.Response {
 
-    log.Printf("handling request for %s", request.PathInfo)
+	log.Printf("handling request %v", request.Params)
 
-    _, err := lambda.SparqlQuery("SELECT ?e ?a ?v WHERE { ?e ?a ?v . }")
-    if err != nil {
-       return lambda.Response{
-          Status:  500,
-          Headers: lambda.Headers{"Content-Type": "text/plain"},
-          Body:    err}
-    }
+	query := mustache.Render(queryTemplate, request.Params)
+	r, err := sparql.Query(query)
+	if err != nil {
+		panic(err)
+	}
 
-    return lambda.Response{
-       Status:  200,
-       Headers: lambda.Headers{"Content-Type": "text/plain"},
-       Body:    true}
+	if len(r.Results.Bindings) != 1 {
+		panic("too many results")
+	}
+
+	dob := r.Results.Bindings[0]["dob"]
+
+	if dob.Type != "xsd:date" {
+		panic("unexpected type")
+	}
+
+	now := time.Now()
+	// 8760 hours in a 365 day year, * 21 years = 183960
+	minimum := now.Add(time.Duration(-183960) * time.Hour)
+	d, err := time.Parse(time.DateOnly, dob.Value)
+
+	return lambda.Response{
+		Status:  200,
+		Headers: lambda.Headers{"Content-Type": "text/plain"},
+		Body:    d.Before(minimum)}
 }
 
 func main() {
-    lambda.Init(&context{})
-    log.Print("Module initialized:", os.Environ())
+	lambda.Init(&context{})
+	log.Print("Module initialized:", os.Environ())
 }
 ```
 

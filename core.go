@@ -52,18 +52,3 @@ func (c context) Handler(request string) string {
 func Init(lambda Lambda) {
 	internal.SetLambda(&context{lambda: lambda})
 }
-
-type SparqlResult struct {
-}
-
-func SparqlQuery(expr string) (*SparqlResult, error) {
-	resp := internal.ManetuLambda0_0_1_SparqlQuery(expr)
-
-	var response map[string]any
-	err := json.Unmarshal([]byte(resp), &response)
-	if err != nil {
-		return nil, err
-	}
-
-	return &SparqlResult{}, nil
-}
