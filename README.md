@@ -69,7 +69,9 @@ func (c context) Handler(request lambda.Request) lambda.Response {
 	}
 
 	if len(r.Results.Bindings) != 1 {
-		panic("too many results")
+		return lambda.Response{
+			Status: 404,
+		}
 	}
 
 	dob := r.Results.Bindings[0]["dob"]
@@ -93,6 +95,7 @@ func main() {
 	lambda.Init(&context{})
 	log.Print("Module initialized:", os.Environ())
 }
+
 ```
 
 ### Compile the program
