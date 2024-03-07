@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
+	"github.com/manetu/lambda-sdk-go"
 	"os"
 )
 

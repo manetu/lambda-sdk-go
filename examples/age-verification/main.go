@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/hoisie/mustache"
+	"github.com/manetu/lambda-sdk-go"
+	"github.com/manetu/lambda-sdk-go/sparql"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go/sparql"
 	"os"
 	"time"
 )
