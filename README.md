@@ -23,7 +23,7 @@ This SDK may be installed with
 $ go get -u github.com/manetu/lambda-sdk-go
 ```
 
-We will also be using [zerolog](https://github.com/rs/zerolog) and [mustach](https://github.com/hoisie/mustache) as part of our example
+We will also be using [zerolog](https://github.com/rs/zerolog) as part of our example
 
 ``` shell
 $ go get -u github.com/rs/zerolog/log
