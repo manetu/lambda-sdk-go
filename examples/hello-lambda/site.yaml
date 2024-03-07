@@ -1,0 +1,25 @@
+api-version: lambda.manetu.io/v1alpha1
+kind: Site
+metadata:
+  name: hello
+spec:
+  runtime: wasi.1.alpha1
+  image: oci://registry.hub.docker.com/manetu/lambda-go-example-hello:v0.0.1
+  env:
+    LOG_LEVEL: trace
+  triggers:
+    http-queries:
+      - route: /greet
+        summary: "Returns a greeting to the user"
+        description: "This request allows you to test the ability to deploy and invoke a simple lambda function."
+        query-parameters:
+          - name: "name"
+            schema: { type: "string" }
+            description: "The caller's name"
+        responses:
+          200:
+            description: "computed greeting"
+            content:
+              text/plain:
+                schema:
+                  type: string

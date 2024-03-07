@@ -27,7 +27,6 @@ We will also be using [zerolog](https://github.com/rs/zerolog) and [mustach](htt
 
 ``` shell
 $ go get -u github.com/rs/zerolog/log
-$ go get -u github.com/hoisie/mustache
 ```
 
 ### Create a main module and HTTP event handler
@@ -38,57 +37,25 @@ Create a file 'main.go' with the following contents:
 package main
 
 import (
-	"github.com/hoisie/mustache"
+	"fmt"
 	"github.com/rs/zerolog/log"
 	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go/sparql"
 	"os"
-	"time"
 )
 
 type context struct {
 }
 
-var queryTemplate = `
-PREFIX foaf:  <http://xmlns.com/foaf/0.1/> 
-SELECT ?dob
-WHERE { 
-     ?s foaf:biometric-hash "{{biometric-hash}}" ;
-        foaf:dob            ?dob .
-}
-`
-
 func (c context) Handler(request lambda.Request) lambda.Response {
 
 	log.Printf("handling request %v", request.Params)
 
-	query := mustache.Render(queryTemplate, request.Params)
-	r, err := sparql.Query(query)
-	if err != nil {
-		panic(err)
-	}
-
-	if len(r.Results.Bindings) != 1 {
-		return lambda.Response{
-			Status: 404,
-		}
-	}
-
-	dob := r.Results.Bindings[0]["dob"]
-
-	if dob.Type != "xsd:date" {
-		panic("unexpected type")
-	}
-
-	now := time.Now()
-	// 8760 hours in a 365 day year, * 21 years = 183960
-	minimum := now.Add(time.Duration(-183960) * time.Hour)
-	d, err := time.Parse(time.DateOnly, dob.Value)
+	greeting := fmt.Sprintf("Hello, %s", request.Params["name"])
 
 	return lambda.Response{
 		Status:  200,
 		Headers: lambda.Headers{"Content-Type": "text/plain"},
-		Body:    d.Before(minimum)}
+		Body:    greeting}
 }
 
 func main() {
@@ -125,36 +92,28 @@ Create a file 'site.yml' with the following contents:
 api-version: lambda.manetu.io/v1alpha1
 kind: Site
 metadata:
-  name: verify
-  tag: verification
+  name: hello
 spec:
   runtime: wasi.1.alpha1
   image: oci://my-registry.example.com/my-lambda:v0.0.1
   env:
     LOG_LEVEL: trace
-  permissions:
-    assumed-roles:
-      - mrn:iam:manetu.io:role:admin
-    scopes:
-      - mrn:iam:manetu.io:scope:read-api
   triggers:
     http-queries:
-      - route: /over21
-        summary: "Verify a person is at least 21 years old by biometric hash"
-        description: "This request allows you to determine if the person identified by a biometric hash is at least 21 years old as of the time the call is made."
+      - route: /greet
+        summary: "Returns a greeting to the user"
+        description: "This request allows you to test the ability to deploy and invoke a simple lambda function."
         query-parameters:
-          - name: "biometric-hash"
+          - name: "name"
             schema: { type: "string" }
-            description: "The biometric hash of the user"
+            description: "The caller's name"
         responses:
           200:
-            description: "verification result when the biometric hash is valid"
+            description: "computed greeting"
             content:
               text/plain:
                 schema:
-                  type: boolean
-          404:
-            description: "the biometric hash is not found"
+                  type: string
 ```
 
 Be sure to adjust the image OCI url

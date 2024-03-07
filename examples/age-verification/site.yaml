@@ -1,0 +1,34 @@
+api-version: lambda.manetu.io/v1alpha1
+kind: Site
+metadata:
+  name: verify
+  tag: verification
+spec:
+  runtime: wasi.1.alpha1
+  image: oci://registry.hub.docker.com/manetu/lambda-go-example-verifyapp:v0.0.2
+  env:
+    LOG_LEVEL: trace
+  permissions:
+    assumed-claims:
+      roles:
+        - mrn:iam:manetu.io:role:admin
+  triggers:
+    http-queries:
+      - route: /over21
+        summary: "Verify a person is at least 21 years old by biometric hash"
+        description: "This request allows you to determine if the person identified by a biometric hash is at least 21 years old as of the time the call is made."
+        query-parameters:
+          - name: "biometric-hash"
+            schema: { type: "string" }
+            description: "The biometric hash of the user"
+        responses:
+          200:
+            description: "verification result"
+            content:
+              text/plain:
+                schema:
+                  type: string
+                  enum:
+                    - not-found
+                    - true
+                    - false
