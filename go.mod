@@ -1,3 +1,3 @@
-module gitlab.com/manetu/pre-release/lambda/lambda-sdk-go
+module github.com/manetu/lambda-sdk-go
 
 go 1.20

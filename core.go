@@ -2,7 +2,7 @@ package lambda
 
 import (
 	"encoding/json"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go/internal"
+	"github.com/manetu/lambda-sdk-go/internal"
 )
 
 type Headers map[string]string

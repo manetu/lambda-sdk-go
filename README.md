@@ -20,7 +20,7 @@ $ go mod init my-lambda
 This SDK may be installed with
 
 ``` shell
-$ go get -u gitlab.com/manetu/pre-release/lambda/lambda-sdk-go
+$ go get -u github.com/manetu/lambda-sdk-go
 ```
 
 We will also be using [zerolog](https://github.com/rs/zerolog) and [mustach](https://github.com/hoisie/mustache) as part of our example
@@ -39,7 +39,7 @@ package main
 import (
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
+	"github.com/manetu/lambda-sdk-go"
 	"os"
 )
 

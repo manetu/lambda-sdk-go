@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	core "gitlab.com/manetu/pre-release/lambda/lambda-sdk-go"
-	"gitlab.com/manetu/pre-release/lambda/lambda-sdk-go/internal"
+	core "github.com/manetu/lambda-sdk-go"
+	"github.com/manetu/lambda-sdk-go/internal"
 )
 
 type Binding struct {
