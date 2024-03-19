@@ -9,10 +9,17 @@ This repository hosts an SDK for developing Lambda functions for the Manetu Plat
 
 ## Project setup
 
-### Create a new go project
+### Create a directory for your project
 
 ``` shell
-$ go mod init my-lambda
+mkdir my-lambda
+cd my-lambda
+```
+
+### Initialize a new go project in your working directory
+
+``` shell
+go mod init my-lambda
 ```
 
 ### Install dependencies
@@ -20,13 +27,13 @@ $ go mod init my-lambda
 This SDK may be installed with
 
 ``` shell
-$ go get -u github.com/manetu/lambda-sdk-go
+go get -u github.com/manetu/lambda-sdk-go
 ```
 
 We will also be using [zerolog](https://github.com/rs/zerolog) as part of our example
 
 ``` shell
-$ go get -u github.com/rs/zerolog/log
+go get -u github.com/rs/zerolog/log
 ```
 
 ### Create a main module and HTTP event handler
@@ -70,7 +77,7 @@ func main() {
 The Manetu platform serves Lambda functions within a [WebAssembly](https://webassembly.org/) environment.  We can leverage the [WASI support](https://tinygo.org/docs/guides/webassembly/wasi/) in tinygo to compile our program.
 
 ``` shell
-$ tinygo build -o my-lambda.wasm --target=wasi main.go
+tinygo build -o my-lambda.wasm --target=wasi main.go
 ```
 
 ### Publish the WASM code
