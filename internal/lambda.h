@@ -15,11 +15,13 @@ typedef struct {
   size_t len;
 } lambda_string_t;
 
-// Imported Functions from `manetu:lambda/sparql@0.0.1`
+// Imported Functions from `manetu:lambda/sparql@0.0.2`
 extern void manetu_lambda_sparql_query(lambda_string_t *expr, lambda_string_t *ret);
 
-// Exported Functions from `lambda`
-void lambda_handler(lambda_string_t *request, lambda_string_t *ret);
+// Exported Functions from `manetu:lambda/guest@0.0.2`
+void exports_manetu_lambda_guest_handle_request(lambda_string_t *request, lambda_string_t *ret);
+uint32_t exports_manetu_lambda_guest_malloc(uint32_t len);
+void exports_manetu_lambda_guest_free(uint32_t ptr);
 
 // Helper Functions
 
