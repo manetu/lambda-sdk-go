@@ -4,7 +4,7 @@ metadata:
   name: verify
   tag: verification
 spec:
-  runtime: wasi.1.alpha1
+  runtime: wasi.1.alpha2
   image: oci://registry.hub.docker.com/manetu/lambda-go-example-verifyapp:v0.0.2
   env:
     LOG_LEVEL: trace

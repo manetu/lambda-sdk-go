@@ -101,7 +101,7 @@ kind: Site
 metadata:
   name: hello
 spec:
-  runtime: wasi.1.alpha1
+  runtime: wasi.1.alpha2
   image: oci://my-registry.example.com/my-lambda:v0.0.1
   env:
     LOG_LEVEL: trace
