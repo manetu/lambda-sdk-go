@@ -1,11 +1,16 @@
-package manetu:lambda@0.0.1;
+package manetu:lambda@0.0.2;
 
 interface sparql {
   query: func(expr: string) -> string;
 }
 
+interface guest {
+  handle-request: func(request: string) -> string;
+  malloc: func(len: u32) -> u32;
+  free: func(ptr: u32);
+}
+
 world lambda {
   import sparql;
-
-  export handler: func(request: string) -> string;
+  export guest;
 }

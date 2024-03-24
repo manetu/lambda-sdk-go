@@ -30,7 +30,7 @@ type Response struct {
 }
 
 func Query(expr string) (*Results, error) {
-	resp := internal.ManetuLambda0_0_1_SparqlQuery(expr)
+	resp := internal.ManetuLambda0_0_2_SparqlQuery(expr)
 
 	var response Response
 	err := json.Unmarshal([]byte(resp), &response)

@@ -2,10 +2,10 @@
 #include "lambda.h"
 
 
-__attribute__((__import_module__("manetu:lambda/sparql@0.0.1"), __import_name__("query")))
+__attribute__((__import_module__("manetu:lambda/sparql@0.0.2"), __import_name__("query")))
 extern void __wasm_import_manetu_lambda_sparql_query(int32_t, int32_t, int32_t);
-__attribute__((__weak__, __export_name__("cabi_post_handler")))
-void __wasm_export_lambda_handler_post_return(int32_t arg0) {
+__attribute__((__weak__, __export_name__("cabi_post_manetu:lambda/guest@0.0.2#handle-request")))
+void __wasm_export_exports_manetu_lambda_guest_handle_request_post_return(int32_t arg0) {
   if ((*((int32_t*) (arg0 + 4))) > 0) {
     free((void*) (*((int32_t*) (arg0 + 0))));
   }
@@ -54,15 +54,26 @@ void manetu_lambda_sparql_query(lambda_string_t *expr, lambda_string_t *ret) {
   *ret = (lambda_string_t) { (uint8_t*)(*((int32_t*) (ptr + 0))), (size_t)(*((int32_t*) (ptr + 4))) };
 }
 
-__attribute__((__export_name__("handler")))
-int32_t __wasm_export_lambda_handler(int32_t arg, int32_t arg0) {
+__attribute__((__export_name__("manetu:lambda/guest@0.0.2#handle-request")))
+int32_t __wasm_export_exports_manetu_lambda_guest_handle_request(int32_t arg, int32_t arg0) {
   lambda_string_t arg1 = (lambda_string_t) { (uint8_t*)(arg), (size_t)(arg0) };
   lambda_string_t ret;
-  lambda_handler(&arg1, &ret);
+  exports_manetu_lambda_guest_handle_request(&arg1, &ret);
   int32_t ptr = (int32_t) &RET_AREA;
   *((int32_t*)(ptr + 4)) = (int32_t) (ret).len;
   *((int32_t*)(ptr + 0)) = (int32_t) (ret).ptr;
   return ptr;
+}
+
+__attribute__((__export_name__("manetu:lambda/guest@0.0.2#malloc")))
+int32_t __wasm_export_exports_manetu_lambda_guest_malloc(int32_t arg) {
+  uint32_t ret = exports_manetu_lambda_guest_malloc((uint32_t) (arg));
+  return (int32_t) (ret);
+}
+
+__attribute__((__export_name__("manetu:lambda/guest@0.0.2#free")))
+void __wasm_export_exports_manetu_lambda_guest_free(int32_t arg) {
+  exports_manetu_lambda_guest_free((uint32_t) (arg));
 }
 
 extern void __component_type_object_force_link_lambda(void);

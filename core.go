@@ -1,8 +1,11 @@
 package lambda
 
+// #include <stdlib.h>
+import "C"
 import (
 	"encoding/json"
 	"github.com/manetu/lambda-sdk-go/internal"
+	"unsafe"
 )
 
 type Headers map[string]string
@@ -28,7 +31,7 @@ type context struct {
 	lambda Lambda
 }
 
-func (c context) Handler(request string) string {
+func (c context) HandleRequest(request string) string {
 	var req Request
 	err := json.Unmarshal([]byte(request), &req)
 	if err != nil {
@@ -49,6 +52,14 @@ func (c context) Handler(request string) string {
 	return string(v)
 }
 
+func (c context) Malloc(len uint32) uint32 {
+	return uint32(uintptr(C.malloc(C.ulong(len))))
+}
+
+func (c context) Free(ptr uint32) {
+	C.free(unsafe.Pointer(uintptr(ptr)))
+}
+
 func Init(lambda Lambda) {
-	internal.SetLambda(&context{lambda: lambda})
+	internal.SetExportsManetuLambda0_0_2_Guest(&context{lambda: lambda})
 }
