@@ -83,17 +83,34 @@ tinygo build -o my-lambda.wasm --target=wasi main.go
 ### Publish the WASM code
 
 We can leverage any [OCI](https://opencontainers.org/) registry to publish our Lambda function using the [wasm-to-oci](https://github.com/engineerd/wasm-to-oci) tool.
+#### Example using dockerhub.com
+Install the docker cli for your system, for example, on ubuntu
 
-``` shell
-$ wasm-to-oci push my-lambda.wasm my-registry.example.com/my-lambda:v0.0.1
-INFO[0003] Pushed: my-registry.example.com/my-lambda:v0.0.1
-INFO[0003] Size: 1242738
-INFO[0003] Digest: sha256:cf9040f3bcd0e84232013ada2b3af02fe3799859480046b88cdd03b59987f3c9
+```shell
+$ sudo apt-get install docker-ce-cli
+```
+Signup for a free account or login to https://hub.docker.com
+Navigate to the https://hub.docker.com/settings/security and create a new Access Token with Read, Write and Delete scopes.
+
+Log in to docker hub, providing the newly created access token when prompted for a password  (note: you many be prompted to configure a credential store)
+```shell
+$ docker login -u <username>
+Login Succeeded
+$
+```
+Push to the docker hub repository where <username> is replaced with your docker hub username. You may want to change the visibility of your docker hub registry. 
+```shell
+$ wasm-to-oci push my-lambda.wasm registry-1.docker.io/<username>/my-lambda:v0.0.1
+INFO[0000] Pushed: registry-1.docker.io/<usename>/my-lambda:v0.0.1
+INFO[0000] Size: 1280878
+INFO[0000] Digest: sha256:19a6292e79635bb8e3d7125f16fd5745c5b45740497dde0fa996791edd2c1d9b
 ```
 
-### Define a specification for your Lambda function
+### Deploy your Lambda function
 
-Create a file 'site.yml' with the following contents:
+#### Define a specification for your Lambda function
+
+Create a file 'site.yml' with the following contents (where <username> is your docker hub username):
 
 ``` yaml
 api-version: lambda.manetu.io/v1alpha1
@@ -102,7 +119,7 @@ metadata:
   name: hello
 spec:
   runtime: wasi.1.alpha2
-  image: oci://my-registry.example.com/my-lambda:v0.0.1
+  image: oci://registry-1.docker.io/<username>/my-lambda:v0.0.1
   env:
     LOG_LEVEL: trace
   triggers:
@@ -123,4 +140,14 @@ spec:
                   type: string
 ```
 
-Be sure to adjust the image OCI url
+#### Add registry credentials to your manetu instance.
+Navigate to https://<manetu-instance>/realm/lambdas/registry-credentials and select the "+" to add credentials
+![Adding registry credentials](resources/lambda-regcred-add.jpg)
+
+
+#### Add the site to your lambda site
+Navigate to https://<manetu-instance>/realm/lambdas/sites and select the "+" to add a site and upload they site.yaml defined above
+![Uploaded a site.yaml](resources/lambda-site-uploaded.jpg)
+
+#### Invoke your function
+navigate to https://<manetu-instance>/lambda to exercise your function using the swagger ui. Note: your token will expire as the swagger interface does not refresh your access token
