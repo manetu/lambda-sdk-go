@@ -45,8 +45,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"github.com/manetu/lambda-sdk-go"
+	"github.com/rs/zerolog/log"
 	"os"
 )
 
@@ -54,15 +54,10 @@ type context struct {
 }
 
 func (c context) Handler(request lambda.Request) lambda.Response {
-
-	log.Printf("handling request %v", request.Params)
-
-	greeting := fmt.Sprintf("Hello, %s", request.Params["name"])
-
 	return lambda.Response{
 		Status:  200,
 		Headers: lambda.Headers{"Content-Type": "text/plain"},
-		Body:    greeting}
+		Body:    fmt.Sprintf("Hello, %s", request.Params["name"])}
 }
 
 func main() {
@@ -98,7 +93,7 @@ $ docker login -u <username>
 Login Succeeded
 $
 ```
-Push to the docker hub repository where <username> is replaced with your docker hub username. You may want to change the visibility of your docker hub registry. 
+Push to the docker hub repository where <username> is replaced with your docker hub username. You may want to change the visibility of your docker hub registry.
 ```shell
 $ wasm-to-oci push my-lambda.wasm registry-1.docker.io/<username>/my-lambda:v0.0.1
 INFO[0000] Pushed: registry-1.docker.io/<usename>/my-lambda:v0.0.1
@@ -159,7 +154,7 @@ export MANETU_URL=https://$MANETU_INSTANCE:443
 export MANETU_GRAPHQL_URL=$MANETU_URL/graphql
 ````
 
-Source the profile to set the environment variables needed by the bash scripts. Confirm that your Manetu environment is 
+Source the profile to set the environment variables needed by the bash scripts. Confirm that your Manetu environment is
 correctly setup by executing get_profile.sh.
 ````shell
 $ source prodfile
@@ -202,7 +197,7 @@ sh ./create_lambda.sh site.yaml
   }
 }
 ````
-Invoke your lambda function 
+Invoke your lambda function
 ```shell
 $ sh ./invoke-hello-lambda.sh Bertram Gilfoyle
 Hello, Bertram Gilfoyle
