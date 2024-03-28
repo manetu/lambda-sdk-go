@@ -110,7 +110,7 @@ INFO[0000] Digest: sha256:19a6292e79635bb8e3d7125f16fd5745c5b45740497dde0fa99679
 
 #### Define a specification for your Lambda function
 
-Create a file 'site.yml' with the following contents (where <username> is your docker hub username):
+Create a file 'site.yml' with the following contents (where `<username>` is your docker hub username):
 
 ``` yaml
 api-version: lambda.manetu.io/v1alpha1
@@ -141,6 +141,75 @@ spec:
 ```
 
 #### Add registry credentials to your manetu instance.
+
+Add your docker token, username and registry url to the profile file in the root of this repo...
+```shell
+$ cat profile | grep DOCKER
+export DOCKER_PAT=<replace-with-docker-token>
+export DOCKER_USERNAME=<replace-with-docker-username>
+export DOCKER_HOSTPORT=registry-1.docker.io
+```
+
+add your Manetu PAT and manetu instance dns names to the profile ...
+````shell
+cat profile | grep MANETU
+export MANETU_PAT=<replace-with-manetu-pat
+export MANETU_INSTANCE=<replace-with-manetu-dns-name>
+export MANETU_URL=https://$MANETU_INSTANCE:443
+export MANETU_GRAPHQL_URL=$MANETU_URL/graphql
+````
+
+Source the profile to set the environment variables needed by the bash scripts. Confirm that your Manetu environment is 
+correctly setup by executing get_profile.sh.
+````shell
+$ source prodfile
+$ sh ./get_profile.sh
+{
+  "data": {
+    "get_profile": {
+      "name": "Bertram Gilfoyle",
+      "userid": "gilfoyle"
+    }
+  }
+}
+$
+````
+Add your docker registry credentials for your lambda container
+````shell
+$ sh ./create_regcred.sh $DOCKER_HOSTPORT $DOCKER_USERNAME
+{
+  "data": {
+    "create_basicauth_regcred": {
+      "hostport": "registry-1.docker.io",
+      "last_updated": "2024-03-28T13:55:48.189Z",
+      "mrn": "mrn:lambda:alpha:regcred:656fca51-c509-3c56-84ef-8aa1fc9ea22d",
+      "version": "1711634148189"
+    }
+  }
+}
+````
+Register your lambda function with your manetu instance
+````shell
+sh ./create_lambda.sh site.yaml
+{
+  "data": {
+    "create_lambda": {
+      "last_updated": "2024-03-28T13:59:08.049Z",
+      "mrn": "mrn:lambda:alpha:site:hello",
+      "paused": false,
+      "version": "1711634348049"
+    }
+  }
+}
+````
+Invoke your lambda function 
+```shell
+$ sh ./invoke-hello-lambda.sh Bertram Gilfoyle
+Hello, Bertram Gilfoyle
+$
+```
+
+#### Alternatively, register your lambda using the manetu ui.
 Navigate to https://<manetu-instance>/realm/lambdas/registry-credentials and select the "+" to add credentials
 ![Adding registry credentials](resources/lambda-regcred-add.jpg)
 
