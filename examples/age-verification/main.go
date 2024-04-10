@@ -13,11 +13,11 @@ type context struct {
 }
 
 var queryTemplate = `
-PREFIX foaf:  <http://xmlns.com/foaf/0.1/> 
+PREFIX id: <http://example.gov/rmv/>
 SELECT ?dob
-WHERE { 
-     ?s foaf:biometric-hash "{{biometric-hash}}" ;
-        foaf:dob            ?dob .
+WHERE {
+     ?s id:biometric-hash "{{biometric-hash}}" ;
+        id:dob            ?dob .
 }
 `
 
